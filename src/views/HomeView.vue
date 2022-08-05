@@ -29,9 +29,11 @@ const handleSubmit = () => {
       <button type="submit">ADD</button>
     </form>
 
-    <div v-for="{ title, timestamp } in todoItems" :key="timestamp">
-      {{ title }}
-    </div>
+    <ul>
+      <li v-for="{ title, timestamp } in todoItems" :key="timestamp">
+        {{ title }}
+      </li>
+    </ul>
   </div>
 </template>
 
