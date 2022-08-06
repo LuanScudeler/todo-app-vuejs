@@ -25,8 +25,19 @@ const handleSubmit = () => {
     <h1 class="green">{{ phrases.titleText }}</h1>
 
     <form @submit.prevent="handleSubmit">
-      <input type="text" v-model.trim="todoTitle" />
-      <button type="submit">ADD</button>
+      <label htmlFor="todo-title">
+        {{ phrases.todoTitleLabel }}
+      </label>
+      <div class="flex">
+        <input
+          type="text"
+          id="todo-title"
+          name="todo_title"
+          placeholder="type a new todo"
+          v-model.trim="todoTitle"
+        />
+        <button type="submit">{{ phrases.addBtnName }}</button>
+      </div>
     </form>
 
     <ul>
@@ -44,9 +55,25 @@ h1 {
   top: -10px;
 }
 
+label {
+  display: block;
+}
+
+input {
+  height: 3rem;
+  padding-left: 1rem;
+  padding-right: 1rem;
+  font-size: 16px;
+  margin-right: 0.25rem;
+}
+
 .home-container {
   display: flex;
   flex-direction: column;
   align-items: center;
+}
+
+.flex {
+  display: flex;
 }
 </style>
