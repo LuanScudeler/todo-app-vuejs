@@ -6,8 +6,7 @@ describe('<HomeView>', () => {
     cy.mount(HomeView)
 
     const todoTestTitle = 'Todo test'
-    const textbox = cy.findByRole('textbox', { name: PHRASES.todoTitleLabel })
-    textbox.type(todoTestTitle)
+    findFormTextbox().type(todoTestTitle)
 
     const button = cy.findByRole('button', { name: PHRASES.addBtnName })
     button.click()
@@ -20,10 +19,22 @@ describe('<HomeView>', () => {
     cy.mount(HomeView)
 
     const todoTestTitle = 'Todo test'
-    const textbox = cy.findByRole('textbox', { name: PHRASES.todoTitleLabel })
-    textbox.type(`${todoTestTitle}{enter}`)
+    findFormTextbox().type(`${todoTestTitle}{enter}`)
 
     const listitem = cy.findByRole('listitem')
     listitem.should('contain', todoTestTitle)
   })
+
+  it('do not submit if textbox is empty', () => {
+    cy.mount(HomeView)
+
+    findFormTextbox().as('formTextbox').invoke('val').should('be.empty')
+
+    cy.get('@formTextbox').type(`{enter}`)
+
+    cy.findByRole('listitem').should('not.exist')
+  })
 })
+
+const findFormTextbox = () =>
+  cy.findByRole('textbox', { name: PHRASES.todoTitleLabel })

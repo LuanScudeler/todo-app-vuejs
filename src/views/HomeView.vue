@@ -34,6 +34,7 @@ const handleSubmit = () => {
           id="todo-title"
           name="todo_title"
           placeholder="type a new todo"
+          required
           v-model.trim="todoTitle"
         />
         <button type="submit">{{ phrases.addBtnName }}</button>
