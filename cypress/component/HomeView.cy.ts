@@ -1,5 +1,5 @@
 import { PHRASES } from '../../src/composables/usePhrases'
-import HomeView from '../../src/views/HomeView.vue'
+import HomeView from '../../src/views/home/HomeView.vue'
 
 describe('<HomeView>', () => {
   it('fill and submit todo form on click', () => {
@@ -33,6 +33,18 @@ describe('<HomeView>', () => {
     cy.get('@formTextbox').type(`{enter}`)
 
     cy.findByRole('listitem').should('not.exist')
+  })
+
+  it('submit and list multiple todos', () => {
+    cy.mount(HomeView)
+
+    findFormTextbox().as('formTextbox')
+
+    cy.get('@formTextbox').type(`Todo1{enter}`)
+    cy.get('@formTextbox').type(`Todo2{enter}`)
+    cy.get('@formTextbox').type(`Todo3{enter}`)
+
+    cy.findAllByRole('listitem').should('have.length', 3)
   })
 })
 

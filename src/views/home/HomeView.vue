@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { usePhrases } from '@/composables/usePhrases.js'
 import { ref } from 'vue'
+import CreateForm from './CreateForm.vue'
 
 interface TodoItem {
   title: string
@@ -9,7 +10,10 @@ interface TodoItem {
 
 const { phrases } = usePhrases()
 const todoTitle = ref('')
-const todoItems = ref<TodoItem[]>([])
+const todoItems = ref<TodoItem[]>([
+  { title: 'test', timestamp: new Date().valueOf().toString() },
+  { title: 'test2', timestamp: new Date().valueOf().toString() }
+])
 
 const handleSubmit = () => {
   todoItems.value.push({
@@ -23,24 +27,7 @@ const handleSubmit = () => {
 <template>
   <div class="home-container">
     <h1 class="green">{{ phrases.titleText }}</h1>
-
-    <form @submit.prevent="handleSubmit">
-      <label htmlFor="todo-title">
-        {{ phrases.todoTitleLabel }}
-      </label>
-      <div class="flex">
-        <input
-          type="text"
-          id="todo-title"
-          name="todo_title"
-          placeholder="type a new todo"
-          required
-          v-model.trim="todoTitle"
-        />
-        <button type="submit">{{ phrases.addBtnName }}</button>
-      </div>
-    </form>
-
+    <CreateForm @handle-submit="handleSubmit" v-model:todoTitle="todoTitle" />
     <ul>
       <li v-for="{ title, timestamp } in todoItems" :key="timestamp">
         {{ title }}
@@ -56,25 +43,20 @@ h1 {
   top: -10px;
 }
 
-label {
-  display: block;
+ul {
+  width: 80%;
+  border: 1px solid rgb(229 231 235);
 }
 
-input {
-  height: 3rem;
-  padding-left: 1rem;
-  padding-right: 1rem;
-  font-size: 16px;
-  margin-right: 0.25rem;
+li {
+  background-color: rgb(255 255 255);
+  border-bottom: 1px solid rgb(229 231 235);
+  padding: 1rem;
 }
 
 .home-container {
   display: flex;
   flex-direction: column;
   align-items: center;
-}
-
-.flex {
-  display: flex;
 }
 </style>
