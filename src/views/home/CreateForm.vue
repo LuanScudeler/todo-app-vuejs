@@ -2,8 +2,13 @@
 import { usePhrases } from '@/composables/usePhrases'
 
 defineProps(['todoTitle'])
-defineEmits(['handle-submit', 'update:todoTitle'])
+const emit = defineEmits(['handleSubmit', 'update:todoTitle'])
 
+function emitTodoTitle(e: Event) {
+  const value = (e.target as HTMLInputElement).value.trim()
+
+  emit('update:todoTitle', value)
+}
 const { phrases } = usePhrases()
 </script>
 
@@ -15,9 +20,7 @@ const { phrases } = usePhrases()
     <div class="flex">
       <input
         :value="todoTitle"
-        @input="
-          $emit('update:todoTitle', ($event.target as HTMLInputElement)?.value)
-        "
+        @input="emitTodoTitle"
         type="text"
         id="todo-title"
         name="todo_title"

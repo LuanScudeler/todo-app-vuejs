@@ -2,6 +2,9 @@
 import { usePhrases } from '@/composables/usePhrases.js'
 import { ref } from 'vue'
 import CreateForm from './CreateForm.vue'
+import IconEdit from '../../components/icons/IconEdit.vue'
+import IconClose from '../../components/icons/IconClose.vue'
+import AppIcon from '../../components/AppIcon.vue'
 
 interface TodoItem {
   title: string
@@ -16,10 +19,12 @@ const todoItems = ref<TodoItem[]>([
 ])
 
 const handleSubmit = () => {
-  todoItems.value.push({
-    title: todoTitle.value,
-    timestamp: new Date().valueOf().toString()
-  })
+  if (todoTitle.value) {
+    todoItems.value.push({
+      title: todoTitle.value,
+      timestamp: new Date().valueOf().toString()
+    })
+  }
   todoTitle.value = ''
 }
 </script>
@@ -28,9 +33,11 @@ const handleSubmit = () => {
   <div class="home-container">
     <h1 class="green">{{ phrases.titleText }}</h1>
     <CreateForm @handle-submit="handleSubmit" v-model:todoTitle="todoTitle" />
-    <ul>
+    <ul v-if="todoItems.length">
       <li v-for="{ title, timestamp } in todoItems" :key="timestamp">
-        {{ title }}
+        <span>{{ title }}</span>
+        <AppIcon :icon="IconEdit" :size="22" />
+        <AppIcon :icon="IconClose" :size="24" />
       </li>
     </ul>
   </div>
@@ -49,9 +56,20 @@ ul {
 }
 
 li {
+  display: flex;
   background-color: rgb(255 255 255);
   border-bottom: 1px solid rgb(229 231 235);
   padding: 1rem;
+}
+
+li span {
+  flex-grow: 1;
+  margin-right: 0.25rem;
+}
+
+svg {
+  margin-right: 0.25rem;
+  margin-left: 0.25rem;
 }
 
 .home-container {
