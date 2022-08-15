@@ -22,6 +22,7 @@ import '@testing-library/cypress/add-commands'
 
 import { mount } from 'cypress/vue'
 import '../../src/assets/main.css'
+import '../../src/assets/base.css'
 
 // Augment the Cypress namespace to include type definitions for
 // your custom command.

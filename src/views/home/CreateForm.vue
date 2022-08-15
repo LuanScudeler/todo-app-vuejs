@@ -2,7 +2,7 @@
 import { usePhrases } from '@/composables/usePhrases'
 
 defineProps(['todoTitle'])
-const emit = defineEmits(['handleSubmit', 'update:todoTitle'])
+const emit = defineEmits(['handle-submit-form', 'update:todoTitle'])
 
 function emitTodoTitle(e: Event) {
   const value = (e.target as HTMLInputElement).value.trim()
@@ -13,7 +13,7 @@ const { phrases } = usePhrases()
 </script>
 
 <template>
-  <form @submit.prevent="$emit('handleSubmit')">
+  <form @submit.prevent="$emit('handle-submit-form')">
     <label htmlFor="todo-title">
       {{ phrases.todoTitleLabel }}
     </label>

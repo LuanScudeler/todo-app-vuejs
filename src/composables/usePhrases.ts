@@ -3,7 +3,11 @@ import { ref } from 'vue'
 export const PHRASES = {
   titleText: 'Todo Vue App',
   todoTitleLabel: 'Todo title',
-  addBtnName: 'Add'
+  addBtnName: 'Add',
+  editBtnName: 'Edit',
+  deleteBtnName: 'Delete',
+  saveBtnName: 'Save',
+  returnBtnName: 'Return'
 }
 
 // global state, created in module scope

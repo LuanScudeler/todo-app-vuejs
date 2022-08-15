@@ -59,8 +59,27 @@ body {
 }
 
 /* resets */
+button {
+  cursor: pointer;
+  align-content: inherit;
+  align-items: inherit;
+  background: transparent;
+  border: 0;
+  height: auto;
+  justify-content: inherit;
+  justify-items: inherit;
+  margin: 0;
+  overflow: visible;
+  padding: 0;
+  width: auto;
+}
+
 ul {
   list-style: none;
   margin: 0;
   padding: 0;
+}
+
+:disabled {
+  cursor: default;
 }

@@ -1,9 +1,13 @@
 import { PHRASES } from '../../src/composables/usePhrases'
 import HomeView from '../../src/views/home/HomeView.vue'
 
+const setupTest = () => {
+  cy.mount(HomeView)
+}
+
 describe('<HomeView>', () => {
   it('fill and submit todo form on click', () => {
-    cy.mount(HomeView)
+    setupTest()
 
     const todoTestTitle = 'Todo test'
     findFormTextbox().type(todoTestTitle)
@@ -16,7 +20,7 @@ describe('<HomeView>', () => {
   })
 
   it('fill and submit todo form on enter', () => {
-    cy.mount(HomeView)
+    setupTest()
 
     const todoTestTitle = 'Todo test'
     findFormTextbox().type(`${todoTestTitle}{enter}`)
@@ -26,7 +30,7 @@ describe('<HomeView>', () => {
   })
 
   it('submit and list multiple todos', () => {
-    cy.mount(HomeView)
+    setupTest()
 
     findFormTextbox().as('formTextbox')
 
@@ -38,7 +42,7 @@ describe('<HomeView>', () => {
   })
 
   it('do not submit if textbox is empty', () => {
-    cy.mount(HomeView)
+    setupTest()
 
     findFormTextbox().as('formTextbox').invoke('val').should('be.empty')
 
@@ -48,7 +52,7 @@ describe('<HomeView>', () => {
   })
 
   it('do not submit if textbox has only white spaces', () => {
-    cy.mount(HomeView)
+    setupTest()
 
     findFormTextbox().as('formTextbox').type(`    {enter}`)
 
@@ -56,12 +60,77 @@ describe('<HomeView>', () => {
   })
 
   it('do not display list element if there are no list items', () => {
-    cy.mount(HomeView)
+    setupTest()
 
     cy.findByRole('listitem').should('not.exist')
     cy.findByRole('list').should('not.exist')
   })
+
+  it('enter edit mode', () => {
+    setupTest()
+    populateTodoList()
+
+    const firstListItem = cy
+      .findAllByRole('listitem')
+      .first()
+      .as('firstTodoItem')
+    firstListItem.within(() => {
+      cy.findByRole('button', { name: PHRASES.editBtnName }).click()
+
+      cy.findByRole('button', { name: PHRASES.saveBtnName }).should('exist')
+      cy.findByRole('button', { name: PHRASES.returnBtnName }).should('exist')
+      cy.findByRole('textbox').should('exist')
+
+      cy.get('@firstTodoItem')
+        .nextAll()
+        .each(($element) => {
+          cy.wrap($element)
+            .as('currentElement')
+            .findByRole('button', { name: PHRASES.editBtnName })
+            .should('be.disabled')
+
+          cy.get('@currentElement')
+            .findByRole('button', { name: PHRASES.deleteBtnName })
+            .should('be.disabled')
+        })
+    })
+  })
+
+  it('exit edit mode', () => {
+    setupTest()
+    populateTodoList()
+
+    const firstListItem = cy
+      .findAllByRole('listitem')
+      .first()
+      .as('firstTodoItem')
+    firstListItem.within(() => {
+      cy.findByRole('button', { name: PHRASES.editBtnName }).click()
+
+      cy.findByRole('button', { name: PHRASES.saveBtnName }).should('exist')
+      cy.findByRole('textbox').should('exist')
+
+      cy.findByRole('button', { name: PHRASES.returnBtnName }).click()
+    })
+
+    cy.findAllByRole('listitem').each(($element) => {
+      cy.wrap($element)
+        .as('currentElement')
+        .findByRole('button', { name: PHRASES.editBtnName })
+        .should('be.enabled')
+
+      cy.get('@currentElement')
+        .findByRole('button', { name: PHRASES.deleteBtnName })
+        .should('be.enabled')
+    })
+  })
 })
+
+const populateTodoList = () => {
+  findFormTextbox().as('formTextbox').type(`Todo1{enter}`)
+  cy.get('@formTextbox').type(`{enter}`).type(`Todo2{enter}`)
+  cy.get('@formTextbox').type(`{enter}`).type(`Todo3{enter}`)
+}
 
 const findFormTextbox = () =>
   cy.findByRole('textbox', { name: PHRASES.todoTitleLabel })

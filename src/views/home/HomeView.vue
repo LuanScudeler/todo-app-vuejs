@@ -2,9 +2,8 @@
 import { usePhrases } from '@/composables/usePhrases.js'
 import { ref } from 'vue'
 import CreateForm from './CreateForm.vue'
-import IconEdit from '../../components/icons/IconEdit.vue'
-import IconClose from '../../components/icons/IconClose.vue'
-import AppIcon from '../../components/AppIcon.vue'
+import TodoViewMode from './TodoViewMode.vue'
+import TodoEditMode from './TodoEditMode.vue'
 
 interface TodoItem {
   title: string
@@ -13,12 +12,11 @@ interface TodoItem {
 
 const { phrases } = usePhrases()
 const todoTitle = ref('')
-const todoItems = ref<TodoItem[]>([
-  { title: 'test', timestamp: new Date().valueOf().toString() },
-  { title: 'test2', timestamp: new Date().valueOf().toString() }
-])
+const editingTodoTitle = ref('')
+const editingTodoIndex = ref<number>()
+const todoItems = ref<TodoItem[]>([])
 
-const handleSubmit = () => {
+function handleCreateFormSubmit() {
   if (todoTitle.value) {
     todoItems.value.push({
       title: todoTitle.value,
@@ -27,17 +25,44 @@ const handleSubmit = () => {
   }
   todoTitle.value = ''
 }
+
+function handleEditFormSubmit() {
+  console.log('editing')
+}
+
+function handleEditMode(index: number) {
+  console.log(index)
+  editingTodoIndex.value = index
+}
+
+function handleCancelEditMode() {
+  editingTodoIndex.value = undefined
+  editingTodoTitle.value = ''
+}
 </script>
 
 <template>
   <div class="home-container">
     <h1 class="green">{{ phrases.titleText }}</h1>
-    <CreateForm @handle-submit="handleSubmit" v-model:todoTitle="todoTitle" />
+    <CreateForm
+      @handle-submit-form="handleCreateFormSubmit"
+      v-model:todoTitle="todoTitle"
+    />
     <ul v-if="todoItems.length">
-      <li v-for="{ title, timestamp } in todoItems" :key="timestamp">
-        <span>{{ title }}</span>
-        <AppIcon :icon="IconEdit" :size="22" />
-        <AppIcon :icon="IconClose" :size="24" />
+      <li v-for="({ title, timestamp }, index) in todoItems" :key="timestamp">
+        <TodoViewMode
+          v-if="editingTodoIndex !== index"
+          :title="title"
+          :is-editing="editingTodoIndex || editingTodoIndex === 0"
+          @handle-edit-mode="() => handleEditMode(index)"
+        />
+        <TodoEditMode
+          v-if="editingTodoIndex === index"
+          :title="title"
+          v-model:editingTodoTitle="editingTodoTitle"
+          @handle-cancel-edit-mode="handleCancelEditMode"
+          @handle-submit-form="handleEditFormSubmit"
+        />
       </li>
     </ul>
   </div>
@@ -60,16 +85,6 @@ li {
   background-color: rgb(255 255 255);
   border-bottom: 1px solid rgb(229 231 235);
   padding: 1rem;
-}
-
-li span {
-  flex-grow: 1;
-  margin-right: 0.25rem;
-}
-
-svg {
-  margin-right: 0.25rem;
-  margin-left: 0.25rem;
 }
 
 .home-container {
