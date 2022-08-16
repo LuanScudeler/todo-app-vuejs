@@ -21,6 +21,7 @@ function emitEditingTodoTitle(e: Event) {
 <template>
   <form class="edit-form" @submit.prevent="$emit('handleSubmitForm')">
     <input
+      v-focus
       class="edit-input"
       :value="editingTodoTitle || title"
       @input="emitEditingTodoTitle"
@@ -31,7 +32,7 @@ function emitEditingTodoTitle(e: Event) {
       required
     />
   </form>
-  <button>
+  <button @click="$emit('handleSubmitForm')">
     <AppIcon :icon="IconSave" :size="22" :title="phrases.saveBtnName" />
   </button>
   <button @click="$emit('handleCancelEditMode')">

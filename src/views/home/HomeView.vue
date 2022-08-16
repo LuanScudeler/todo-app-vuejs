@@ -27,11 +27,10 @@ function handleCreateFormSubmit() {
 }
 
 function handleEditFormSubmit() {
-  console.log('editing')
+  console.log(editingTodoTitle.value)
 }
 
 function handleEditMode(index: number) {
-  console.log(index)
   editingTodoIndex.value = index
 }
 
