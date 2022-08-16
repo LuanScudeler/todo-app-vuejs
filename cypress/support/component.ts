@@ -23,6 +23,7 @@ import '@testing-library/cypress/add-commands'
 import { mount } from 'cypress/vue'
 import '../../src/assets/main.css'
 import '../../src/assets/base.css'
+import { globalDirectives } from '../../src/main'
 
 // Augment the Cypress namespace to include type definitions for
 // your custom command.
@@ -36,7 +37,12 @@ declare global {
   }
 }
 
-Cypress.Commands.add('mount', mount)
+Cypress.Commands.add('mount', (component, options = {}) => {
+  options.global ||= {}
+  options.global.directives = globalDirectives
+
+  return mount(component, options)
+})
 
 // Example use:
 // cy.mount(MyComponent)

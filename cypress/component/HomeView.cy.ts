@@ -70,49 +70,68 @@ describe('<HomeView>', () => {
     setupTest()
     populateTodoList()
 
-    const firstListItem = cy
-      .findAllByRole('listitem')
+    cy.findAllByRole('listitem')
       .first()
       .as('firstTodoItem')
-    firstListItem.within(() => {
-      cy.findByRole('button', { name: PHRASES.editBtnName }).click()
+      .within(() => {
+        cy.findByRole('button', { name: PHRASES.editBtnName }).click()
 
-      cy.findByRole('button', { name: PHRASES.saveBtnName }).should('exist')
-      cy.findByRole('button', { name: PHRASES.returnBtnName }).should('exist')
-      cy.findByRole('textbox').should('exist')
+        cy.findByRole('button', { name: PHRASES.saveBtnName }).should('exist')
+        cy.findByRole('button', { name: PHRASES.returnBtnName }).should('exist')
+        cy.findByRole('textbox').should('exist')
+      })
 
-      cy.get('@firstTodoItem')
-        .nextAll()
-        .each(($element) => {
-          cy.wrap($element)
-            .as('currentElement')
-            .findByRole('button', { name: PHRASES.editBtnName })
-            .should('be.disabled')
+    // Check if all other items are in view mode and actions are disabled
+    cy.get('@firstTodoItem')
+      .nextAll()
+      .each(($element) => {
+        cy.wrap($element)
+          .as('currentElement')
+          .findByRole('button', { name: PHRASES.editBtnName })
+          .should('be.disabled')
 
-          cy.get('@currentElement')
-            .findByRole('button', { name: PHRASES.deleteBtnName })
-            .should('be.disabled')
-        })
-    })
+        cy.get('@currentElement')
+          .findByRole('button', { name: PHRASES.deleteBtnName })
+          .should('be.disabled')
+      })
+  })
+
+  it('edit mode should always render with input focused', () => {
+    setupTest()
+    populateTodoList()
+
+    cy.findAllByRole('listitem')
+      .first()
+      .within(() => {
+        cy.findByRole('button', { name: PHRASES.editBtnName })
+          .as('editButton')
+          .click()
+        cy.findByRole('textbox').should('be.focused')
+
+        cy.findByRole('button', { name: PHRASES.returnBtnName }).click()
+        cy.findByRole('button', { name: PHRASES.editBtnName }).click()
+
+        cy.findByRole('textbox').should('be.focused')
+      })
   })
 
   it('exit edit mode', () => {
     setupTest()
     populateTodoList()
 
-    const firstListItem = cy
-      .findAllByRole('listitem')
+    cy.findAllByRole('listitem')
       .first()
       .as('firstTodoItem')
-    firstListItem.within(() => {
-      cy.findByRole('button', { name: PHRASES.editBtnName }).click()
+      .within(() => {
+        cy.findByRole('button', { name: PHRASES.editBtnName }).click()
 
-      cy.findByRole('button', { name: PHRASES.saveBtnName }).should('exist')
-      cy.findByRole('textbox').should('exist')
+        cy.findByRole('button', { name: PHRASES.saveBtnName }).should('exist')
+        cy.findByRole('textbox').should('exist')
 
-      cy.findByRole('button', { name: PHRASES.returnBtnName }).click()
-    })
+        cy.findByRole('button', { name: PHRASES.returnBtnName }).click()
+      })
 
+    // Check if all elements are on view mode
     cy.findAllByRole('listitem').each(($element) => {
       cy.wrap($element)
         .as('currentElement')
