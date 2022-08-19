@@ -27,7 +27,11 @@ function handleCreateFormSubmit() {
 }
 
 function handleEditFormSubmit() {
-  console.log(editingTodoTitle.value)
+  console.log('handleEditFormSubmit', editingTodoTitle.value)
+}
+
+function handleDelete(index: number) {
+  console.log('handleDelete', index)
 }
 
 function handleEditMode(index: number) {
@@ -54,6 +58,7 @@ function handleCancelEditMode() {
           :title="title"
           :is-editing="editingTodoIndex || editingTodoIndex === 0"
           @handle-edit-mode="() => handleEditMode(index)"
+          @handle-delete="() => handleDelete(index)"
         />
         <TodoEditMode
           v-if="editingTodoIndex === index"

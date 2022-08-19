@@ -5,7 +5,7 @@ import AppIcon from '../../components/AppIcon.vue'
 import { usePhrases } from '@/composables/usePhrases'
 
 defineProps(['title', 'isEditing'])
-defineEmits(['handleEditMode'])
+defineEmits(['handleEditMode', 'handleDelete'])
 const { phrases } = usePhrases()
 </script>
 
@@ -14,7 +14,7 @@ const { phrases } = usePhrases()
   <button @click="$emit('handleEditMode')" :disabled="isEditing">
     <AppIcon :icon="IconEdit" :size="22" :title="phrases.editBtnName" />
   </button>
-  <button :disabled="isEditing">
+  <button @click="$emit('handleDelete')" :disabled="isEditing">
     <AppIcon :icon="IconClose" :size="24" :title="phrases.deleteBtnName" />
   </button>
 </template>

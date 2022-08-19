@@ -115,6 +115,30 @@ describe('<HomeView>', () => {
       })
   })
 
+  it.only('cancelling editing should discard any changes done to the todo tile', () => {
+    setupTest()
+    populateTodoList()
+
+    cy.findAllByRole('listitem')
+      .first()
+      .within(() => {
+        cy.findByRole('button', { name: PHRASES.editBtnName }).click()
+
+        cy.findByRole('textbox').then(($textboxBeforeEdit) => {
+          const valueBeforeEdit = $textboxBeforeEdit.val()
+
+          cy.wrap($textboxBeforeEdit).type(`edited`)
+
+          cy.findByRole('button', { name: PHRASES.returnBtnName }).click()
+          cy.findByRole('button', { name: PHRASES.editBtnName }).click()
+
+          cy.findByRole('textbox').should(($textboxAfterEdit) => {
+            expect($textboxAfterEdit.val()).to.equal(valueBeforeEdit)
+          })
+        })
+      })
+  })
+
   it('exit edit mode', () => {
     setupTest()
     populateTodoList()
