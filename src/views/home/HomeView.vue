@@ -4,11 +4,24 @@ import { ref } from 'vue'
 import CreateForm from './CreateForm.vue'
 import TodoViewMode from './TodoViewMode.vue'
 import TodoEditMode from './TodoEditMode.vue'
+import { useQuery } from '@vue/apollo-composable'
+import gql from 'graphql-tag'
+import { computed } from 'vue'
 
 interface TodoItem {
   title: string
   timestamp: string
 }
+
+const { result, loading, error } = useQuery(gql`
+  query getTodos {
+    todos {
+      id
+      title
+    }
+  }
+`)
+const todos = computed(() => result.value?.todos ?? [])
 
 const { phrases } = usePhrases()
 const todoTitle = ref('')
@@ -51,8 +64,10 @@ function handleCancelEditMode() {
       @handle-submit-form="handleCreateFormSubmit"
       v-model:todoTitle="todoTitle"
     />
-    <ul v-if="todoItems.length">
-      <li v-for="({ title, timestamp }, index) in todoItems" :key="timestamp">
+    <div v-if="loading">Loading...</div>
+    <div v-else-if="error">Error: {{ error.message }}</div>
+    <ul v-else-if="todos.length">
+      <li v-for="({ title, id }, index) in todos" :key="id">
         <TodoViewMode
           v-if="editingTodoIndex !== index"
           :title="title"
