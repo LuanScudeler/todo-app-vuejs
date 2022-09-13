@@ -4,6 +4,7 @@ import { ref } from 'vue'
 import CreateForm from './CreateForm.vue'
 import TodoViewMode from './TodoViewMode.vue'
 import TodoEditMode from './TodoEditMode.vue'
+import { GET_TODOS } from './apiOperations.const'
 import { useQuery } from '@vue/apollo-composable'
 import gql from 'graphql-tag'
 import { computed } from 'vue'
@@ -14,7 +15,7 @@ interface TodoItem {
 }
 
 const { result, loading, error } = useQuery(gql`
-  query getTodos {
+  query ${GET_TODOS} {
     todos {
       id
       title

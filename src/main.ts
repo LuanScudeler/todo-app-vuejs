@@ -10,17 +10,16 @@ import {
   InMemoryCache
 } from '@apollo/client/core'
 
-// HTTP connection to the API
+const API_PROD_URL = 'https://todo-app-api-kohl.vercel.app/graphql'
+export const API_DEV_URL = 'http://localhost:3000/graphql'
+
 const httpLink = createHttpLink({
-  // You should use an absolute URL here
-  uri: 'http://localhost:3000/graphql'
+  uri: process.env.NODE_ENV === 'production' ? API_PROD_URL : API_DEV_URL
 })
 
-// Cache implementation
 const cache = new InMemoryCache()
 
-// Create the apollo client
-const apolloClient = new ApolloClient({
+export const apolloClient = new ApolloClient({
   link: httpLink,
   cache
 })
@@ -39,6 +38,8 @@ export const globalDirectives = {
   }
 }
 
+type DirectivesKeys = keyof typeof globalDirectives
+
 Object.keys(globalDirectives).forEach((key) => {
   app.directive(key, globalDirectives[key as DirectivesKeys])
 })
@@ -46,5 +47,3 @@ Object.keys(globalDirectives).forEach((key) => {
 app.use(router)
 
 app.mount('#app')
-
-type DirectivesKeys = keyof typeof globalDirectives

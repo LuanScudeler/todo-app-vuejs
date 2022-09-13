@@ -1,11 +1,49 @@
 import { PHRASES } from '../../src/composables/usePhrases'
 import HomeView from '../../src/views/home/HomeView.vue'
+import { aliasQuery, hasOperationName } from '../utils/graphql-test-utils'
+import { GET_TODOS } from '../../src/views/home/apiOperations.const'
+import { API_DEV_URL } from '../../src/main'
+
+const TODOS_MOCK = {
+  todos: [
+    {
+      id: '630e23633680db4343956685',
+      title: 'updated',
+      __typename: 'Todo'
+    },
+    {
+      id: '630f8ce74ce5045819fc8264',
+      title: 'Todo',
+      __typename: 'Todo'
+    }
+  ]
+}
 
 const setupTest = () => {
   cy.mount(HomeView)
 }
 
 describe('<HomeView>', () => {
+  beforeEach(() => {
+    cy.intercept('POST', API_DEV_URL, (req) => {
+      // Queries
+      aliasQuery(req, GET_TODOS)
+      if (hasOperationName(req, GET_TODOS)) {
+        req.reply(
+          JSON.stringify({
+            data: TODOS_MOCK
+          })
+        )
+      }
+    })
+  })
+
+  it('list todos', () => {
+    setupTest()
+
+    cy.findAllByRole('listitem').should('have.length', TODOS_MOCK.todos.length)
+  })
+
   it('fill and submit todo form on click', () => {
     setupTest()
 
@@ -115,7 +153,7 @@ describe('<HomeView>', () => {
       })
   })
 
-  it.only('cancelling editing should discard any changes done to the todo tile', () => {
+  it('cancelling editing should discard any changes done to the todo tile', () => {
     setupTest()
     populateTodoList()
 

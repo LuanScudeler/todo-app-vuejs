@@ -23,7 +23,8 @@ import '@testing-library/cypress/add-commands'
 import { mount } from 'cypress/vue'
 import '../../src/assets/main.css'
 import '../../src/assets/base.css'
-import { globalDirectives } from '../../src/main'
+import { apolloClient, globalDirectives } from '../../src/main'
+import { provideApolloClient } from '@vue/apollo-composable'
 
 // Augment the Cypress namespace to include type definitions for
 // your custom command.
@@ -40,6 +41,8 @@ declare global {
 Cypress.Commands.add('mount', (component, options = {}) => {
   options.global ||= {}
   options.global.directives = globalDirectives
+
+  provideApolloClient(apolloClient)
 
   return mount(component, options)
 })
