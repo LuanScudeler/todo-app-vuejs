@@ -23,8 +23,10 @@ import '@testing-library/cypress/add-commands'
 import { mount } from 'cypress/vue'
 import '../../src/assets/main.css'
 import '../../src/assets/base.css'
-import { apolloClient, globalDirectives } from '../../src/main'
+import { API_DEV_URL, apolloClient, globalDirectives } from '../../src/main'
 import { provideApolloClient } from '@vue/apollo-composable'
+import { aliasQuery, hasOperationName } from '../utils/graphql-test-utils'
+import { GET_TODOS } from '../../src/views/home/apiOperations.const'
 
 // Augment the Cypress namespace to include type definitions for
 // your custom command.
@@ -47,5 +49,31 @@ Cypress.Commands.add('mount', (component, options = {}) => {
   return mount(component, options)
 })
 
-// Example use:
-// cy.mount(MyComponent)
+export const TODOS_MOCK = {
+  todos: [
+    {
+      id: '630e23633680db4343956685',
+      title: 'updated',
+      __typename: 'Todo'
+    },
+    {
+      id: '630f8ce74ce5045819fc8264',
+      title: 'Todo',
+      __typename: 'Todo'
+    }
+  ]
+}
+
+beforeEach(() => {
+  cy.intercept('POST', API_DEV_URL, (req) => {
+    // Queries
+    aliasQuery(req, GET_TODOS)
+    if (hasOperationName(req, GET_TODOS)) {
+      req.reply(
+        JSON.stringify({
+          data: TODOS_MOCK
+        })
+      )
+    }
+  })
+})

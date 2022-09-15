@@ -4,48 +4,60 @@ import { ref } from 'vue'
 import CreateForm from './CreateForm.vue'
 import TodoViewMode from './TodoViewMode.vue'
 import TodoEditMode from './TodoEditMode.vue'
-import { GET_TODOS } from './apiOperations.const'
-import { useQuery } from '@vue/apollo-composable'
-import gql from 'graphql-tag'
 import { computed } from 'vue'
+import {
+  createMutation,
+  deleteMutation,
+  editMutation,
+  fetchTodos
+} from './todos.api'
 
-interface TodoItem {
-  title: string
-  timestamp: string
-}
-
-const { result, loading, error } = useQuery(gql`
-  query ${GET_TODOS} {
-    todos {
-      id
-      title
-    }
-  }
-`)
+const { result, loading, error } = fetchTodos()
 const todos = computed(() => result.value?.todos ?? [])
+
+const { mutate: createTodo, onError: onCreate } = createMutation()
+
+const {
+  mutate: editTodo,
+  onError: onEditError,
+  onDone: onEditDone
+} = editMutation()
+
+onEditDone(() => {
+  handleCancelEditMode()
+})
+
+const { mutate: deleteTodo, onError: onDeleteError } = deleteMutation()
 
 const { phrases } = usePhrases()
 const todoTitle = ref('')
 const editingTodoTitle = ref('')
 const editingTodoIndex = ref<number>()
-const todoItems = ref<TodoItem[]>([])
 
 function handleCreateFormSubmit() {
   if (todoTitle.value) {
-    todoItems.value.push({
-      title: todoTitle.value,
-      timestamp: new Date().valueOf().toString()
+    createTodo({
+      title: todoTitle.value
     })
   }
   todoTitle.value = ''
 }
 
-function handleEditFormSubmit() {
-  console.log('handleEditFormSubmit', editingTodoTitle.value)
+function handleEditFormSubmit(id: string) {
+  if (editingTodoTitle.value) {
+    editTodo({
+      id,
+      title: editingTodoTitle.value
+    })
+  } else {
+    handleCancelEditMode()
+  }
 }
 
-function handleDelete(index: number) {
-  console.log('handleDelete', index)
+function handleDelete(id: string) {
+  deleteTodo({
+    id
+  })
 }
 
 function handleEditMode(index: number) {
@@ -74,14 +86,14 @@ function handleCancelEditMode() {
           :title="title"
           :is-editing="editingTodoIndex || editingTodoIndex === 0"
           @handle-edit-mode="() => handleEditMode(index)"
-          @handle-delete="() => handleDelete(index)"
+          @handle-delete="() => handleDelete(id)"
         />
         <TodoEditMode
           v-if="editingTodoIndex === index"
           :title="title"
           v-model:editingTodoTitle="editingTodoTitle"
           @handle-cancel-edit-mode="handleCancelEditMode"
-          @handle-submit-form="handleEditFormSubmit"
+          @handle-submit-form="() => handleEditFormSubmit(id)"
         />
       </li>
     </ul>
