@@ -8,14 +8,21 @@ import {
 } from './apiOperations.const'
 
 export const fetchTodos = () => {
-  return useQuery(gql`
+  return useQuery(
+    gql`
   query ${GET_TODOS} {
     todos {
       id
       title
     }
   }
-`)
+`,
+    null,
+    {
+      fetchPolicy:
+        process.env.NODE_ENV === 'development' ? 'network-only' : 'cache-first'
+    }
+  )
 }
 
 export const createMutation = () =>

@@ -53,27 +53,37 @@ export const TODOS_MOCK = {
   todos: [
     {
       id: '630e23633680db4343956685',
-      title: 'updated',
+      title: 'Todo 1',
       __typename: 'Todo'
     },
     {
       id: '630f8ce74ce5045819fc8264',
-      title: 'Todo',
+      title: 'Todo 2',
       __typename: 'Todo'
     }
   ]
 }
 
-beforeEach(() => {
-  cy.intercept('POST', API_DEV_URL, (req) => {
-    // Queries
-    aliasQuery(req, GET_TODOS)
-    if (hasOperationName(req, GET_TODOS)) {
-      req.reply(
-        JSON.stringify({
-          data: TODOS_MOCK
-        })
-      )
+export const fetchTodosInterceptor = (
+  mock = TODOS_MOCK,
+  isMiddleware = false
+) => {
+  return cy.intercept(
+    { method: 'POST', url: API_DEV_URL, middleware: isMiddleware },
+    (req) => {
+      // Queries
+      aliasQuery(req, GET_TODOS)
+      if (hasOperationName(req, GET_TODOS)) {
+        req.reply(
+          JSON.stringify({
+            data: mock
+          })
+        )
+      }
     }
-  })
+  )
+}
+
+beforeEach(() => {
+  fetchTodosInterceptor()
 })

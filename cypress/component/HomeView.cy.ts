@@ -1,9 +1,6 @@
 import { PHRASES } from '../../src/composables/usePhrases'
 import HomeView from '../../src/views/home/HomeView.vue'
-import { aliasQuery, hasOperationName } from '../utils/graphql-test-utils'
-import { GET_TODOS } from '../../src/views/home/apiOperations.const'
-import { API_DEV_URL } from '../../src/main'
-import { TODOS_MOCK } from '../support/component'
+import { fetchTodosInterceptor, TODOS_MOCK } from '../support/component'
 
 const setupTest = () => {
   cy.mount(HomeView)
@@ -12,64 +9,30 @@ const setupTest = () => {
 describe('<HomeView>', () => {
   it('list todos', () => {
     setupTest()
-
     cy.findAllByRole('listitem').should('have.length', TODOS_MOCK.todos.length)
   })
 
-  it('fill and submit todo form on click', () => {
-    setupTest()
-
-    const todoTestTitle = 'Todo test'
-    findFormTextbox().type(todoTestTitle)
-
-    const button = cy.findByRole('button', { name: PHRASES.addBtnName })
-    button.click()
-
-    const listitem = cy.findByRole('listitem')
-    listitem.should('contain', todoTestTitle)
-  })
-
-  it('fill and submit todo form on enter', () => {
-    setupTest()
-
-    const todoTestTitle = 'Todo test'
-    findFormTextbox().type(`${todoTestTitle}{enter}`)
-
-    const listitem = cy.findByRole('listitem')
-    listitem.should('contain', todoTestTitle)
-  })
-
-  it('submit and list multiple todos', () => {
-    setupTest()
-
-    findFormTextbox().as('formTextbox')
-
-    cy.get('@formTextbox').type(`Todo1{enter}`)
-    cy.get('@formTextbox').type(`Todo2{enter}`)
-    cy.get('@formTextbox').type(`Todo3{enter}`)
-
-    cy.findAllByRole('listitem').should('have.length', 3)
-  })
-
   it('do not submit if textbox is empty', () => {
+    fetchTodosInterceptor({ todos: [] })
     setupTest()
-
     findFormTextbox().as('formTextbox').invoke('val').should('be.empty')
 
     cy.get('@formTextbox').type(`{enter}`)
 
-    cy.findByRole('listitem').should('not.exist')
+    cy.findByRole('list').should('not.exist')
   })
 
   it('do not submit if textbox has only white spaces', () => {
+    fetchTodosInterceptor({ todos: [] })
     setupTest()
 
     findFormTextbox().as('formTextbox').type(`    {enter}`)
 
-    cy.findByRole('listitem').should('not.exist')
+    cy.findByRole('list').should('not.exist')
   })
 
   it('do not display list element if there are no list items', () => {
+    fetchTodosInterceptor({ todos: [] })
     setupTest()
 
     cy.findByRole('listitem').should('not.exist')
@@ -78,7 +41,6 @@ describe('<HomeView>', () => {
 
   it('enter edit mode', () => {
     setupTest()
-    populateTodoList()
 
     cy.findAllByRole('listitem')
       .first()
@@ -108,7 +70,6 @@ describe('<HomeView>', () => {
 
   it('edit mode should always render with input focused', () => {
     setupTest()
-    populateTodoList()
 
     cy.findAllByRole('listitem')
       .first()
@@ -127,7 +88,6 @@ describe('<HomeView>', () => {
 
   it('cancelling editing should discard any changes done to the todo tile', () => {
     setupTest()
-    populateTodoList()
 
     cy.findAllByRole('listitem')
       .first()
@@ -151,7 +111,6 @@ describe('<HomeView>', () => {
 
   it('exit edit mode', () => {
     setupTest()
-    populateTodoList()
 
     cy.findAllByRole('listitem')
       .first()
