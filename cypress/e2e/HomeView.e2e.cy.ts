@@ -4,7 +4,10 @@ const setupTest = () => {
   cy.visit('/')
 }
 
+const resetDatabase = () => cy.exec('npm run reset:database')
+
 describe('<HomeView>', () => {
+  beforeEach(resetDatabase)
   it('fill and submit todo form on click', () => {
     setupTest()
 
