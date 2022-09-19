@@ -10,7 +10,7 @@ const { phrases } = usePhrases()
 </script>
 
 <template>
-  <span>{{ title }}</span>
+  <span v-bind="$attrs">{{ title }}</span>
   <button @click="$emit('handleEditMode')" :disabled="isEditing">
     <AppIcon :icon="IconEdit" :size="22" :title="phrases.editBtnName" />
   </button>

@@ -31,10 +31,11 @@ function emitEditingTodoTitle(e: Event) {
       placeholder="type a new todo"
       required
     />
+    <button type="submit">
+      <AppIcon :icon="IconSave" :size="22" :title="phrases.saveBtnName" />
+    </button>
   </form>
-  <button @click="$emit('handleSubmitForm')">
-    <AppIcon :icon="IconSave" :size="22" :title="phrases.saveBtnName" />
-  </button>
+
   <button @click="$emit('handleCancelEditMode')">
     <AppIcon :icon="IconReturn" :size="24" :title="phrases.returnBtnName" />
   </button>
@@ -42,6 +43,7 @@ function emitEditingTodoTitle(e: Event) {
 
 <style scoped>
 .edit-form {
+  display: flex;
   flex-grow: 1;
 }
 

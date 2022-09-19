@@ -1,6 +1,10 @@
 import { PHRASES } from '../../src/composables/usePhrases'
 import HomeView from '../../src/views/home/HomeView.vue'
-import { fetchTodosInterceptor, TODOS_MOCK } from '../support/component'
+import {
+  editTodoInterceptor,
+  fetchTodosInterceptor,
+  TODOS_MOCK
+} from '../support/component'
 
 const setupTest = () => {
   cy.mount(HomeView)
@@ -84,6 +88,21 @@ describe('<HomeView>', () => {
 
         cy.findByRole('textbox').should('be.focused')
       })
+  })
+  it.only('do not edit if textbox has only white spaces', () => {
+    editTodoInterceptor('replySpy')
+    setupTest()
+
+    cy.findAllByRole('listitem')
+      .first()
+      .within(() => {
+        cy.findByRole('button', { name: PHRASES.editBtnName }).click()
+        cy.findByRole('textbox').clear().type('      ')
+
+        cy.findByRole('button', { name: PHRASES.saveBtnName }).click()
+      })
+
+    cy.get('@replySpy').should('not.have.been.called')
   })
 
   it('cancelling editing should discard any changes done to the todo tile', () => {

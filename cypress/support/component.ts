@@ -26,7 +26,10 @@ import '../../src/assets/base.css'
 import { API_DEV_URL, apolloClient, globalDirectives } from '../../src/main'
 import { provideApolloClient } from '@vue/apollo-composable'
 import { aliasQuery, hasOperationName } from '../utils/graphql-test-utils'
-import { GET_TODOS } from '../../src/views/home/apiOperations.const'
+import {
+  GET_TODOS,
+  UPDATE_TODO
+} from '../../src/views/home/apiOperations.const'
 
 // Augment the Cypress namespace to include type definitions for
 // your custom command.
@@ -64,26 +67,38 @@ export const TODOS_MOCK = {
   ]
 }
 
-export const fetchTodosInterceptor = (
-  mock = TODOS_MOCK,
-  isMiddleware = false
-) => {
-  return cy.intercept(
-    { method: 'POST', url: API_DEV_URL, middleware: isMiddleware },
-    (req) => {
-      // Queries
-      aliasQuery(req, GET_TODOS)
-      if (hasOperationName(req, GET_TODOS)) {
-        req.reply(
-          JSON.stringify({
-            data: mock
-          })
-        )
-      }
+export const fetchTodosInterceptor = (mock = TODOS_MOCK) => {
+  return cy.intercept({ method: 'POST', url: API_DEV_URL }, (req) => {
+    aliasQuery(req, GET_TODOS)
+    if (hasOperationName(req, GET_TODOS)) {
+      req.reply(
+        JSON.stringify({
+          data: mock
+        })
+      )
     }
-  )
+  })
+}
+
+export const editTodoInterceptor = (replySpyAlias = 'alias', mock = {}) => {
+  return cy.intercept({ method: 'POST', url: API_DEV_URL }, (req) => {
+    aliasQuery(req, UPDATE_TODO)
+
+    cy.spy(req, 'reply').as(replySpyAlias)
+
+    if (hasOperationName(req, UPDATE_TODO)) {
+      req.reply(
+        JSON.stringify({
+          data: {
+            update: mock
+          }
+        })
+      )
+    }
+  })
 }
 
 beforeEach(() => {
   fetchTodosInterceptor()
+  editTodoInterceptor()
 })

@@ -81,9 +81,14 @@ function handleCancelEditMode() {
     <div v-if="loading">Loading...</div>
     <div v-else-if="error">Error: {{ error.message }}</div>
     <ul v-else-if="todos.length">
-      <li v-for="({ title, id }, index) in todos" :key="id">
+      <li
+        v-for="({ title, id }, index) in todos"
+        :key="id"
+        :aria-labelledby="title"
+      >
         <TodoViewMode
           v-if="editingTodoIndex !== index"
+          :id="title"
           :title="title"
           :is-editing="editingTodoIndex || editingTodoIndex === 0"
           @handle-edit-mode="() => handleEditMode(index)"

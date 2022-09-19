@@ -39,6 +39,43 @@ describe('<HomeView>', () => {
 
     cy.findAllByRole('listitem').should('have.length', 3)
   })
+
+  it.only('edit a todo on enter', () => {
+    setupTest()
+
+    const todoTitle = 'Todo1'
+    findFormTextbox().as('formTextbox')
+    cy.get('@formTextbox').type(`${todoTitle}{enter}`)
+
+    cy.findAllByRole('listitem', { name: todoTitle }).within(() => {
+      cy.findByRole('button', { name: PHRASES.editBtnName }).click()
+      cy.findByRole('textbox').as('editTextbox').clear()
+
+      const todoTitleEdited = 'edited'
+      cy.get('@editTextbox').type(`${todoTitleEdited}{enter}`)
+
+      // cy.findByRole('button', { name: PHRASES.saveBtnName }).click()
+    })
+    cy.findAllByRole('listitem', { name: 'edited' })
+  })
+
+  it.only('edit a todo on clicking save button', () => {
+    setupTest()
+
+    const todoTitle = 'Todo1'
+    findFormTextbox().as('formTextbox')
+    cy.get('@formTextbox').type(`${todoTitle}{enter}`)
+
+    cy.findAllByRole('listitem', { name: todoTitle }).within(() => {
+      cy.findByRole('button', { name: PHRASES.editBtnName }).click()
+      cy.findByRole('textbox').as('editTextbox').clear()
+
+      const todoTitleEdited = 'edited'
+      cy.get('@editTextbox').type(`${todoTitleEdited}`)
+      cy.findByRole('button', { name: PHRASES.saveBtnName }).click()
+    })
+    cy.findAllByRole('listitem', { name: 'edited' })
+  })
 })
 
 const findFormTextbox = () =>
