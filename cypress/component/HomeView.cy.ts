@@ -89,7 +89,7 @@ describe('<HomeView>', () => {
         cy.findByRole('textbox').should('be.focused')
       })
   })
-  it.only('do not edit if textbox has only white spaces', () => {
+  it('do not edit if textbox has only white spaces', () => {
     editTodoInterceptor('replySpy')
     setupTest()
 
@@ -156,12 +156,6 @@ describe('<HomeView>', () => {
     })
   })
 })
-
-const populateTodoList = () => {
-  findFormTextbox().as('formTextbox').type(`Todo1{enter}`)
-  cy.get('@formTextbox').type(`{enter}`).type(`Todo2{enter}`)
-  cy.get('@formTextbox').type(`{enter}`).type(`Todo3{enter}`)
-}
 
 const findFormTextbox = () =>
   cy.findByRole('textbox', { name: PHRASES.todoTitleLabel })

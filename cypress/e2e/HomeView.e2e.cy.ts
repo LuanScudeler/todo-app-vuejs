@@ -40,43 +40,70 @@ describe('<HomeView>', () => {
     cy.findAllByRole('listitem').should('have.length', 3)
   })
 
-  it.only('edit a todo on enter', () => {
+  it('edit a todo on enter', () => {
     setupTest()
 
     const todoTitle = 'Todo1'
-    findFormTextbox().as('formTextbox')
-    cy.get('@formTextbox').type(`${todoTitle}{enter}`)
+    createTodo(todoTitle)
 
     cy.findAllByRole('listitem', { name: todoTitle }).within(() => {
       cy.findByRole('button', { name: PHRASES.editBtnName }).click()
       cy.findByRole('textbox').as('editTextbox').clear()
 
-      const todoTitleEdited = 'edited'
-      cy.get('@editTextbox').type(`${todoTitleEdited}{enter}`)
-
-      // cy.findByRole('button', { name: PHRASES.saveBtnName }).click()
+      cy.get('@editTextbox').type(`edited{enter}`)
     })
     cy.findAllByRole('listitem', { name: 'edited' })
   })
 
-  it.only('edit a todo on clicking save button', () => {
+  it('edit a todo on clicking save button', () => {
     setupTest()
 
     const todoTitle = 'Todo1'
-    findFormTextbox().as('formTextbox')
-    cy.get('@formTextbox').type(`${todoTitle}{enter}`)
+    createTodo(todoTitle)
 
     cy.findAllByRole('listitem', { name: todoTitle }).within(() => {
       cy.findByRole('button', { name: PHRASES.editBtnName }).click()
       cy.findByRole('textbox').as('editTextbox').clear()
 
-      const todoTitleEdited = 'edited'
-      cy.get('@editTextbox').type(`${todoTitleEdited}`)
+      cy.get('@editTextbox').type(`${'edited'}`)
       cy.findByRole('button', { name: PHRASES.saveBtnName }).click()
     })
     cy.findAllByRole('listitem', { name: 'edited' })
   })
+
+  it('delete a the last todo in the list', () => {
+    setupTest()
+
+    const todoTitle = 'Todo1'
+    createTodo(todoTitle)
+
+    cy.findAllByRole('listitem', { name: todoTitle }).within(() => {
+      cy.findByRole('button', { name: PHRASES.deleteBtnName }).click()
+    })
+    cy.findAllByRole('list').should('not.exist')
+  })
+
+  it('delete a todo', () => {
+    setupTest()
+
+    const todoTitle1 = 'Todo1'
+    createTodo(todoTitle1)
+
+    const todoTitle2 = 'Todo2'
+    createTodo(todoTitle2)
+
+    cy.findAllByRole('listitem', { name: todoTitle2 }).within(() => {
+      cy.findByRole('button', { name: PHRASES.deleteBtnName }).click()
+    })
+    cy.findByRole('listitem', { name: todoTitle2 }).should('not.exist')
+    cy.findByRole('listitem', { name: todoTitle1 })
+  })
 })
+
+const createTodo = (todoTitle: string) => {
+  findFormTextbox().as('formTextbox')
+  cy.get('@formTextbox').type(`${todoTitle}{enter}`)
+}
 
 const findFormTextbox = () =>
   cy.findByRole('textbox', { name: PHRASES.todoTitleLabel })
