@@ -12,11 +12,10 @@ import {
   fetchTodos
 } from './todos.api'
 
-//TODO: Complete CRUD tests using cy.intercept()
 const { result, loading, error } = fetchTodos()
 const todos = computed(() => result.value?.todos ?? [])
 
-const { mutate: createTodo, onError: onCreate } = createMutation()
+const { mutate: createTodo, onError: onCreateError } = createMutation()
 
 const {
   mutate: editTodo,

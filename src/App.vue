@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { RouterLink, RouterView } from 'vue-router'
+import UserInfo from './components/UserInfo.vue'
 </script>
 
 <template>
@@ -10,6 +11,7 @@ import { RouterLink, RouterView } from 'vue-router'
         <RouterLink to="/about">About</RouterLink>
       </nav>
     </div>
+    <UserInfo />
   </header>
 
   <RouterView />
@@ -47,6 +49,7 @@ nav a:first-of-type {
 @media (min-width: 1024px) {
   header {
     display: flex;
+    align-items: center;
   }
 
   header .wrapper {
@@ -60,7 +63,7 @@ nav a:first-of-type {
     font-size: 1rem;
 
     padding: 1rem 0;
-    margin-top: 1rem;
+    margin-top: 0.5rem;
   }
 }
 </style>

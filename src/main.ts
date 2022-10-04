@@ -14,14 +14,16 @@ const API_PROD_URL = 'https://todo-app-api-kohl.vercel.app/graphql'
 export const API_DEV_URL = 'http://localhost:3000/graphql'
 
 const httpLink = createHttpLink({
-  uri: process.env.NODE_ENV === 'production' ? API_PROD_URL : API_DEV_URL
+  uri: process.env.NODE_ENV === 'production' ? API_PROD_URL : API_DEV_URL,
+  credentials: 'include'
 })
 
 const cache = new InMemoryCache()
 
 export const apolloClient = new ApolloClient({
   link: httpLink,
-  cache
+  cache,
+  credentials: 'include'
 })
 
 const app = createApp({
