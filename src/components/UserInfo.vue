@@ -6,7 +6,7 @@ const { store } = useStore()
 
 <template>
   <div class="user-info">
-    <span v-if="store.user.name">User: {{ store.user.name }}</span>
+    <span v-if="store.user?.name">User: {{ store.user?.name }}</span>
   </div>
 </template>
 
@@ -14,7 +14,7 @@ const { store } = useStore()
 .user-info {
   white-space: nowrap;
   text-align: center;
-  margin-top: 0.5rem;
+  margin-right: 1rem;
 }
 
 @media (min-width: 1024px) {

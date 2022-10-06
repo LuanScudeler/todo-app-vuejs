@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { usePhrases } from '@/composables/usePhrases'
 import { useStore } from '@/composables/useStore'
+import { APP_ROUTES } from '@/router'
 import { ref } from 'vue'
 import { useRouter } from 'vue-router'
 import { loginMutation } from './login.api'
@@ -27,9 +28,7 @@ function handleLoginSubmit() {
 
 loginDone((result) => {
   saveUser(result.data.login.user)
-  router.push({
-    name: 'home'
-  })
+  router.push(APP_ROUTES.HOME.path)
 })
 
 loginError((apolloError) => (error.value = apolloError.message))
@@ -107,6 +106,7 @@ button {
   .login {
     display: flex;
     justify-content: center;
+    margin-top: 5rem;
   }
 }
 

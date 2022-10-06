@@ -1,8 +1,10 @@
-import { useMutation } from '@vue/apollo-composable'
+import { useMutation, useQuery } from '@vue/apollo-composable'
 import gql from 'graphql-tag'
 
 const API_OPERATIONS = {
-  LOGIN: 'Login'
+  LOGIN: 'Login',
+  LOGOUT: 'Logout',
+  IS_AUTHENTICATED: 'IsAuthenticated'
 }
 
 export const loginMutation = () =>
@@ -18,3 +20,26 @@ export const loginMutation = () =>
       }
     `
   )
+
+export const logoutMutation = () =>
+  useMutation(
+    gql`
+        mutation ${API_OPERATIONS.LOGOUT} {
+          logout
+        }
+      `
+  )
+
+export const isAuthenticated = () => {
+  return useQuery(
+    gql`
+    query ${API_OPERATIONS.IS_AUTHENTICATED} {
+      isAuthenticated
+    }
+  `,
+    null,
+    {
+      fetchPolicy: 'no-cache'
+    }
+  )
+}

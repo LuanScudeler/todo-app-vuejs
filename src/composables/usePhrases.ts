@@ -4,6 +4,7 @@ export const PHRASES = {
   loginEmailLabel: 'Email',
   loginPasswordLabel: 'Password',
   loginBtnName: 'LOGIN',
+  logoutBtnName: 'LOGOUT',
   titleText: 'Todo Vue App',
   todoTitleLabel: 'Todo title',
   addBtnName: 'Add',
